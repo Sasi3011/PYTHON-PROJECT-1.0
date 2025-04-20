@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Irrigation System</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                200: '#bbf7d0',
+                300: '#86efac',
+                400: '#4ade80',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+                800: '#166534',
+                900: '#14532d',
+                950: '#052e16',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+    
+    <!-- React and related libraries -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""></script>
+    
+    <style>
+      /* Base styles */
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #f9fafb;
+        color: #111827;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      }
+      
+      .leaflet-container {
+        height: 300px;
+        width: 100%;
+        border-radius: 0.5rem;
+      }
+      
+      .chart-container {
+        height: 300px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <!-- App will be rendered here -->
+      <div class="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-primary-600 mb-4">Smart Irrigation System</h1>
+          <p class="text-gray-600 mb-8">Loading application...</p>
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- We'll create a simplified version in a separate file -->
+    <script src="app.js" defer></script>
+  </body>
+</html>
