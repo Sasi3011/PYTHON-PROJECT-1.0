@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import MapSearch from './MapSearch';
 
 // LocationMarker component to handle map clicks and marker position
 const LocationMarker = ({ onLocationSelect }) => {
@@ -20,6 +21,7 @@ const LocationMarker = ({ onLocationSelect }) => {
 
 const MapPicker = ({ onLocationSelect }) => {
   const [defaultPosition, setDefaultPosition] = useState([20.5937, 78.9629]); // Default to center of India
+  const [showSearch, setShowSearch] = useState(false);
   
   // Try to get user's location if available
   useEffect(() => {
@@ -38,16 +40,29 @@ const MapPicker = ({ onLocationSelect }) => {
 
   return (
     <div className="border rounded-lg overflow-hidden">
-      <MapContainer center={defaultPosition} zoom={5} scrollWheelZoom={true}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <LocationMarker onLocationSelect={onLocationSelect} />
-      </MapContainer>
-      <div className="bg-gray-100 p-2 text-xs text-gray-600">
-        Click on the map to select a location for your field
+      <div className="bg-gray-100 p-2 flex justify-between items-center">
+        <span className="text-xs text-gray-600">Click on the map to select a location for your field</span>
+        <button 
+          onClick={() => setShowSearch(!showSearch)}
+          className="text-xs bg-primary-600 text-white px-2 py-1 rounded hover:bg-primary-700"
+        >
+          {showSearch ? 'Hide Search' : 'Search Places'}
+        </button>
       </div>
+      
+      {showSearch && (
+        <MapSearch onLocationSelect={onLocationSelect} />
+      )}
+      
+      {!showSearch && (
+        <MapContainer center={defaultPosition} zoom={5} scrollWheelZoom={true}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <LocationMarker onLocationSelect={onLocationSelect} />
+        </MapContainer>
+      )}
     </div>
   );
 };

@@ -64,10 +64,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sis.wsgi.application'
 
-# MongoDB Database - Commented out until MongoDB is installed
-# import mongoengine
-# MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/sis_db')
-# mongoengine.connect(host=MONGODB_URI)
+# MongoDB Database - Try to connect, but don't fail if it's not available
+try:
+    import mongoengine
+    MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/sis_db')
+    mongoengine.connect(host=MONGODB_URI)
+    MONGODB_AVAILABLE = True
+except Exception as e:
+    print(f"MongoDB connection failed: {str(e)}")
+    MONGODB_AVAILABLE = False
 
 # Default Django database (required for admin, auth, etc.)
 DATABASES = {
