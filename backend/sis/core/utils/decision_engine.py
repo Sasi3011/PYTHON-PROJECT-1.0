@@ -7,33 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def calculate_irrigation_decision(crop_data, soil_data, sensor_data, weather_data):
-    """
-    Calculates irrigation decision based on crop, soil, sensor, and weather data
     
-    Args:
-        crop_data (dict): Crop information
-            - name: Crop name
-            - ideal_moisture: [min, max] percentage
-            - ideal_temp: [min, max] celsius
-            - base_water_lph: Base water need in liters per hour
-        soil_data (dict): Soil information
-            - name: Soil name
-            - absorption_rate: Absorption coefficient (0-1)
-        sensor_data (dict): Sensor readings
-            - soil_moisture: Current soil moisture percentage
-            - temperature: Current temperature in Celsius
-            - humidity: Current humidity percentage
-        weather_data (dict): Weather information
-            - temperature: Current temperature in Celsius
-            - humidity: Current humidity percentage
-            - rain_probability: Probability of rain percentage
-            
-    Returns:
-        dict: Irrigation decision
-            - water_amount: Water amount in liters per hour
-            - duration: Irrigation duration in hours
-            - status: Status of irrigation (Active, Pending, etc.)
-    """
     try:
         # Extract relevant data
         base_water = crop_data['base_water_lph']

@@ -23,8 +23,3 @@ class IrrigationLogAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
-# Register models with admin site
-# Commented out until MongoDB is configured
-# admin.site.register(Crop, CropAdmin)
-# admin.site.register(Soil, SoilAdmin)
-# admin.site.register(IrrigationLog, IrrigationLogAdmin)
