@@ -13,11 +13,11 @@ from datetime import datetime
 import logging
 from django.conf import settings
 
-# Import MongoDB model only if MongoDB is available
+# Import MongoDB model if MongoDB is available
 if getattr(settings, 'MONGODB_AVAILABLE', False):
     from .models_location import LocationSearch
 else:
-    # Create a dummy in-memory storage if MongoDB is not available
+    # Fallback to in-memory storage if MongoDB is not available
     class DummyLocationSearch:
         _storage = []
         

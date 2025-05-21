@@ -1,5 +1,5 @@
 """
-API views for Smart Irrigation System (Temporary implementation without MongoDB)
+API views for Smart Irrigation System (Using MongoDB database)
 """
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,60 +11,136 @@ import csv
 from datetime import datetime
 import logging
 import random
+from django.conf import settings
 
 from .utils.sensor_simulator import simulate_sensor_data
 from .utils.weather_api import get_weather_data
 
+# Import MongoDB models if available
+if getattr(settings, 'MONGODB_AVAILABLE', False):
+    from .models import Crop, Soil, IrrigationLog, SensorData, WeatherData, IrrigationDecision as IrrigationDecisionModel
+
 logger = logging.getLogger(__name__)
 
-# Temporary in-memory storage for demo purposes
-CROPS = {
-    "turmeric": {
-        "name": "turmeric",
-        "ideal_moisture": [65, 75],
-        "ideal_temp": [25, 30],
-        "base_water_lph": 1.2
-    },
-    "tomato": {
-        "name": "tomato",
-        "ideal_moisture": [60, 70],
-        "ideal_temp": [20, 28],
-        "base_water_lph": 0.9
-    },
-    "potato": {
-        "name": "potato",
-        "ideal_moisture": [55, 65],
-        "ideal_temp": [18, 24],
-        "base_water_lph": 0.8
-    },
-    "rice": {
-        "name": "rice",
-        "ideal_moisture": [80, 90],
-        "ideal_temp": [24, 32],
-        "base_water_lph": 1.5
+# Function to get crops from MongoDB or fallback to hardcoded data
+def get_crops():
+    if getattr(settings, 'MONGODB_AVAILABLE', False):
+        try:
+            # Get crops from MongoDB
+            crops_dict = {}
+            for crop in Crop.objects.all():
+                crops_dict[crop.name] = {
+                    'name': crop.name,
+                    'ideal_moisture': crop.ideal_moisture,
+                    'ideal_temp': crop.ideal_temp,
+                    'base_water_lph': crop.base_water_lph
+                }
+            return crops_dict
+        except Exception as e:
+            logger.error(f"Error fetching crops from MongoDB: {str(e)}")
+    
+    # Fallback to hardcoded data
+    return {
+        "turmeric": {
+            "name": "turmeric",
+            "ideal_moisture": [65, 75],
+            "ideal_temp": [25, 30],
+            "base_water_lph": 1.2
+        },
+        "tomato": {
+            "name": "tomato",
+            "ideal_moisture": [60, 70],
+            "ideal_temp": [20, 28],
+            "base_water_lph": 0.9
+        },
+        "potato": {
+            "name": "potato",
+            "ideal_moisture": [55, 65],
+            "ideal_temp": [18, 24],
+            "base_water_lph": 0.8
+        },
+        "rice": {
+            "name": "rice",
+            "ideal_moisture": [80, 90],
+            "ideal_temp": [24, 32],
+            "base_water_lph": 1.5
+        }
     }
-}
 
-SOILS = {
-    "Red Soil": {
-        "name": "Red Soil",
-        "absorption_rate": 0.8
-    },
-    "Black Soil": {
-        "name": "Black Soil",
-        "absorption_rate": 0.7
-    },
-    "Alluvial Soil": {
-        "name": "Alluvial Soil",
-        "absorption_rate": 0.9
-    },
-    "Loamy Soil": {
-        "name": "Loamy Soil",
-        "absorption_rate": 0.85
+# Function to get soils from MongoDB or fallback to hardcoded data
+def get_soils():
+    if getattr(settings, 'MONGODB_AVAILABLE', False):
+        try:
+            # Get soils from MongoDB
+            soils_dict = {}
+            for soil in Soil.objects.all():
+                soils_dict[soil.name] = {
+                    'name': soil.name,
+                    'absorption_rate': soil.absorption_rate
+                }
+            return soils_dict
+        except Exception as e:
+            logger.error(f"Error fetching soils from MongoDB: {str(e)}")
+    
+    # Fallback to hardcoded data
+    return {
+        "Red Soil": {
+            "name": "Red Soil",
+            "absorption_rate": 0.8
+        },
+        "Black Soil": {
+            "name": "Black Soil",
+            "absorption_rate": 0.7
+        },
+        "Alluvial Soil": {
+            "name": "Alluvial Soil",
+            "absorption_rate": 0.9
+        },
+        "Loamy Soil": {
+            "name": "Loamy Soil",
+            "absorption_rate": 0.85
+        }
     }
-}
 
-# In-memory history storage
+# Function to get irrigation history from MongoDB or fallback to in-memory storage
+def get_irrigation_history():
+    if getattr(settings, 'MONGODB_AVAILABLE', False):
+        try:
+            # Get irrigation logs from MongoDB
+            history = []
+            for log in IrrigationLog.objects.order_by('-timestamp')[:50]:
+                history.append({
+                    'id': str(log.id),
+                    'timestamp': log.timestamp.isoformat(),
+                    'user': log.user,
+                    'crop_type': log.crop_type,
+                    'soil_type': log.soil_type,
+                    'latitude': log.latitude,
+                    'longitude': log.longitude,
+                    'sensor_data': {
+                        'soil_moisture': log.sensor_data.soil_moisture,
+                        'temperature': log.sensor_data.temperature,
+                        'humidity': log.sensor_data.humidity
+                    },
+                    'weather_data': {
+                        'temperature': log.weather_data.temperature,
+                        'humidity': log.weather_data.humidity,
+                        'rain_probability': log.weather_data.rain_probability
+                    },
+                    'decision': {
+                        'water_amount': log.decision.water_amount,
+                        'duration': log.decision.duration,
+                        'status': log.decision.status
+                    }
+                })
+            return history
+        except Exception as e:
+            logger.error(f"Error fetching irrigation history from MongoDB: {str(e)}")
+    
+    # Fallback to in-memory storage
+    return []
+
+# Initialize in-memory history storage as fallback
 IRRIGATION_HISTORY = []
 
 def calculate_irrigation_decision(crop_data, soil_data, sensor_data, weather_data):
@@ -166,20 +242,24 @@ class IrrigationDecisionView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
+            # Get crops and soils from MongoDB or fallback
+            crops = get_crops()
+            soils = get_soils()
+            
             # Validate crop and soil types
-            if data['crop_type'] not in CROPS:
+            if data['crop_type'] not in crops:
                 return Response(
                     {"error": f"Crop type '{data['crop_type']}' not found"}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            if data['soil_type'] not in SOILS:
+            if data['soil_type'] not in soils:
                 return Response(
                     {"error": f"Soil type '{data['soil_type']}' not found"}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            crop = CROPS[data['crop_type']]
-            soil = SOILS[data['soil_type']]
+            crop = crops[data['crop_type']]
+            soil = soils[data['soil_type']]
             
             # Simulate sensor data
             sensor_data = simulate_sensor_data()
@@ -204,27 +284,89 @@ class IrrigationDecisionView(APIView):
                 weather_data=weather_data
             )
             
-            # Create log entry
-            log_entry = {
-                'id': str(len(IRRIGATION_HISTORY) + 1),
-                'timestamp': datetime.now().isoformat(),
-                'user': request.user.username if request.user.is_authenticated else 'guest',
-                'crop_type': data['crop_type'],
-                'soil_type': data['soil_type'],
-                'latitude': latitude,
-                'longitude': longitude,
-                'sensor_data': sensor_data,
-                'weather_data': weather_data,
-                'decision': decision
-            }
-            
-            # Add to history
-            IRRIGATION_HISTORY.append(log_entry)
+            # Store in MongoDB if available
+            if getattr(settings, 'MONGODB_AVAILABLE', False):
+                try:
+                    # Create embedded documents
+                    sensor_data_doc = SensorData(
+                        soil_moisture=sensor_data['soil_moisture'],
+                        temperature=sensor_data['temperature'],
+                        humidity=sensor_data['humidity']
+                    )
+                    
+                    weather_data_doc = WeatherData(
+                        temperature=weather_data['temperature'],
+                        humidity=weather_data['humidity'],
+                        rain_probability=weather_data['rain_probability']
+                    )
+                    
+                    decision_doc = IrrigationDecisionModel(
+                        water_amount=decision['water_amount'],
+                        duration=decision['duration'],
+                        status=decision['status']
+                    )
+                    
+                    # Create and save the log
+                    log = IrrigationLog(
+                        user=request.user.username if request.user.is_authenticated else 'guest',
+                        crop_type=data['crop_type'],
+                        soil_type=data['soil_type'],
+                        latitude=latitude,
+                        longitude=longitude,
+                        sensor_data=sensor_data_doc,
+                        weather_data=weather_data_doc,
+                        decision=decision_doc
+                    )
+                    
+                    log.save()
+                    history_entry = {
+                        'id': str(log.id),
+                        'timestamp': log.timestamp.isoformat(),
+                        'user': log.user,
+                        'crop_type': log.crop_type,
+                        'soil_type': log.soil_type,
+                        'latitude': log.latitude,
+                        'longitude': log.longitude,
+                        'sensor_data': sensor_data,
+                        'weather_data': weather_data,
+                        'decision': decision
+                    }
+                except Exception as e:
+                    logger.error(f"Error saving to MongoDB: {str(e)}")
+                    # Fallback to in-memory storage
+                    history_entry = {
+                        'id': str(len(IRRIGATION_HISTORY) + 1),
+                        'timestamp': datetime.now().isoformat(),
+                        'user': request.user.username if request.user.is_authenticated else 'guest',
+                        'crop_type': data['crop_type'],
+                        'soil_type': data['soil_type'],
+                        'latitude': latitude,
+                        'longitude': longitude,
+                        'sensor_data': sensor_data,
+                        'weather_data': weather_data,
+                        'decision': decision
+                    }
+                    IRRIGATION_HISTORY.insert(0, history_entry)
+            else:
+                # Fallback to in-memory storage
+                history_entry = {
+                    'id': str(len(IRRIGATION_HISTORY) + 1),
+                    'timestamp': datetime.now().isoformat(),
+                    'user': request.user.username if request.user.is_authenticated else 'guest',
+                    'crop_type': data['crop_type'],
+                    'soil_type': data['soil_type'],
+                    'latitude': latitude,
+                    'longitude': longitude,
+                    'sensor_data': sensor_data,
+                    'weather_data': weather_data,
+                    'decision': decision
+                }
+                IRRIGATION_HISTORY.insert(0, history_entry)
             
             # Prepare response
             response_data = {
-                'id': log_entry['id'],
-                'timestamp': log_entry['timestamp'],
+                'id': history_entry['id'],
+                'timestamp': history_entry['timestamp'],
                 'sensor_data': sensor_data,
                 'weather_data': weather_data,
                 'decision': decision
@@ -248,23 +390,14 @@ class IrrigationHistoryView(APIView):
     
     def get(self, request):
         try:
-            # Get query parameters
-            limit = int(request.query_params.get('limit', 50))
-            crop_type = request.query_params.get('crop_type', None)
+            # Get irrigation history from MongoDB or fallback
+            history = get_irrigation_history()
             
-            # Filter history
-            if crop_type:
-                filtered_history = [log for log in IRRIGATION_HISTORY if log['crop_type'] == crop_type]
-            else:
-                filtered_history = IRRIGATION_HISTORY.copy()
-            
-            # Sort by timestamp (newest first)
-            filtered_history.sort(key=lambda x: x['timestamp'], reverse=True)
-            
-            # Apply limit
-            filtered_history = filtered_history[:limit]
-            
-            return Response({'history': filtered_history}, status=status.HTTP_200_OK)
+            # If MongoDB history is empty but we have in-memory history, use that
+            if not history and IRRIGATION_HISTORY:
+                history = IRRIGATION_HISTORY[:50]
+                
+            return Response({"history": history})
             
         except Exception as e:
             logger.error(f"Error retrieving irrigation history: {str(e)}")
@@ -332,26 +465,14 @@ class CropSoilDataView(APIView):
     
     def get(self, request):
         try:
-            # Format response
-            crop_data = []
-            for crop_name, crop in CROPS.items():
-                crop_data.append({
-                    'name': crop['name'],
-                    'ideal_moisture': crop['ideal_moisture'],
-                    'ideal_temp': crop['ideal_temp'],
-                    'base_water_lph': crop['base_water_lph']
-                })
+            # Get crops and soils from MongoDB or fallback
+            crops = get_crops()
+            soils = get_soils()
             
-            soil_data = []
-            for soil_name, soil in SOILS.items():
-                soil_data.append({
-                    'name': soil['name'],
-                    'absorption_rate': soil['absorption_rate']
-                })
-            
+            # Return crop and soil data
             return Response({
-                'crops': crop_data,
-                'soils': soil_data
+                'crops': list(crops.values()),
+                'soils': list(soils.values())
             }, status=status.HTTP_200_OK)
             
         except Exception as e:

@@ -13,6 +13,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sis.settings')
 django.setup()
 
 # Import models
+from django.conf import settings
+
+# Check if MongoDB is available
+if not getattr(settings, 'MONGODB_AVAILABLE', False):
+    print("MongoDB is not available. Please check your connection settings.")
+    sys.exit(1)
+
+# Import models
 from sis.core.models import Crop, Soil, IrrigationLog, SensorData, WeatherData, IrrigationDecision
 
 def create_crops():

@@ -64,12 +64,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sis.wsgi.application'
 
-# MongoDB Database - Try to connect, but don't fail if it's not available
+# MongoDB Database Connection
 try:
     import mongoengine
     MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/sis_db')
     mongoengine.connect(host=MONGODB_URI)
     MONGODB_AVAILABLE = True
+    print(f"MongoDB connected successfully to {MONGODB_URI}")
 except Exception as e:
     print(f"MongoDB connection failed: {str(e)}")
     MONGODB_AVAILABLE = False
