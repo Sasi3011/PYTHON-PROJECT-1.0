@@ -1,0 +1,646 @@
+  <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Irrigation System - Welcome</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          fontFamily: {
+            'sans': ['Poppins', 'sans-serif'],
+          },
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                200: '#bbf7d0',
+                300: '#86efac',
+                400: '#4ade80',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+                800: '#166534',
+                900: '#14532d',
+                950: '#052e16',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    
+    <style>
+      /* Base styles */
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #f9fafb;
+        color: #111827;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        scroll-behavior: smooth;
+      }
+      
+      .hero-bg {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+      }
+      
+      .hero-bg::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 80px;
+        background: linear-gradient(to top, #f9fafb, transparent);
+        z-index: 1;
+      }
+      
+      .feature-card {
+        transition: all 0.4s ease-in-out;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        border: none !important;
+      }
+      
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(22, 163, 74, 0.05) 0%, rgba(255, 255, 255, 0) 50%);
+        z-index: -1;
+        transition: all 0.4s ease-in-out;
+      }
+      
+      .feature-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #16a34a, #4ade80);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease-in-out;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 30px -10px rgba(22, 163, 74, 0.15), 0 10px 15px -5px rgba(22, 163, 74, 0.1);
+        background-color: white;
+      }
+      
+      .feature-card:hover::before {
+        background: linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(255, 255, 255, 0) 60%);
+      }
+      
+      .feature-card:hover::after {
+        transform: scaleX(1);
+      }
+      
+      .feature-icon {
+        transition: all 0.4s ease-in-out;
+        position: relative;
+        z-index: 2;
+      }
+      
+      .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(10deg);
+        box-shadow: 0 10px 20px -5px rgba(22, 163, 74, 0.3);
+      }
+      
+      .btn-primary {
+        background-color: #16a34a;
+        color: white;
+        padding: 0.85rem 1.8rem;
+        border-radius: 0.5rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 12px -2px rgba(22, 163, 74, 0.3), 0 2px 6px -1px rgba(22, 163, 74, 0.2);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 1rem;
+      }
+      
+      .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: width 0.3s ease;
+        z-index: -1;
+      }
+      
+      .btn-primary:hover {
+        background-color: #15803d;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px -4px rgba(22, 163, 74, 0.4), 0 8px 12px -2px rgba(22, 163, 74, 0.3);
+      }
+      
+      .btn-primary:hover::before {
+        width: 100%;
+      }
+      
+      .btn-secondary {
+        background-color: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 0.85rem 1.8rem;
+        border-radius: 0.5rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 4px 12px -2px rgba(255, 255, 255, 0.2), 0 2px 6px -1px rgba(255, 255, 255, 0.1);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 1rem;
+      }
+      
+      .btn-secondary:hover {
+        background-color: white;
+        color: #15803d;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 25px -4px rgba(255, 255, 255, 0.3), 0 8px 12px -2px rgba(255, 255, 255, 0.2);
+      }
+      
+      .nav-link {
+        position: relative;
+        text-decoration: none;
+      }
+      
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -4px;
+        left: 0;
+        background-color: #16a34a;
+        transition: width 0.3s ease;
+      }
+      
+      .nav-link:hover::after {
+        width: 100%;
+      }
+      
+      .section-title {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+      }
+      
+      .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 3px;
+        background-color: #16a34a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col">
+      <!-- Header -->
+      <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-3 flex justify-between items-center">
+          <div class="flex items-center">
+            <a href="landing.html" class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+              <h1 class="text-xl font-bold text-primary-600 ml-2">Smart Irrigation System</h1>
+            </a>
+          </div>
+          <nav class="hidden md:flex items-center space-x-8">
+            <a href="#features" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">Features</a>
+            <a href="#benefits" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">Benefits</a>
+            <a href="#about" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">About</a>
+            <a href="#action" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">Take Action</a>
+            <a href="#footer" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">Contact</a>
+            <a href="history.html" class="text-gray-700 hover:text-primary-600 transition-colors font-medium">History</a>
+            <a href="index.html" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2.5 px-6 rounded-md transition-colors uppercase tracking-wide shadow-md hover:shadow-lg">Get Started</a>
+          </nav>
+          <div class="md:hidden flex items-center">
+            <a href="index.html" class="text-primary-600 hover:text-primary-700 mr-4 font-medium">Get Started</a>
+            <button class="text-primary-600 hover:text-primary-700 focus:outline-none" id="mobile-menu-button">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <!-- Mobile menu, hidden by default -->
+        <div class="md:hidden hidden bg-white border-t border-gray-100" id="mobile-menu">
+          <div class="px-4 pt-2 pb-3 space-y-2">
+            <a href="#features" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">Features</a>
+            <a href="#benefits" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">Benefits</a>
+            <a href="#about" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">About</a>
+            <a href="#action" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">Take Action</a>
+            <a href="#footer" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">Contact</a>
+            <a href="history.html" class="block py-2 text-base font-medium text-gray-700 hover:text-primary-600">History</a>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Hero Section -->
+      <section class="hero-bg text-white relative">
+        <div class="absolute inset-0">
+          <img src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" 
+               alt="Agriculture field" 
+               class="w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-black to-transparent opacity-80"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-screen flex items-center">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center w-full">
+            <div class="max-w-3xl">
+              <h1 class="text-5xl sm:text-6xl font-bold mb-8 leading-tight animate__animated animate__fadeInUp">Smart Irrigation for Modern Agriculture</h1>
+              <p class="text-2xl mb-10 text-gray-100 animate__animated animate__fadeInUp animate__delay-1s">Optimize water usage, increase crop yield, and make data-driven decisions with our advanced irrigation system.</p>
+              <div class="flex flex-wrap gap-8 animate__animated animate__fadeInUp animate__delay-2s mt-12">
+                <a href="index.html" class="bg-white text-primary-700 hover:bg-primary-50 text-lg px-12 py-5 rounded-full font-bold flex items-center shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border-2 border-transparent hover:border-primary-500">
+                  <span class="mr-2">ACCESS INPUT PAGE</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </a>
+                <a href="#features" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary-700 text-lg px-12 py-5 rounded-full font-bold flex items-center shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                  <span class="mr-2">LEARN MORE</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+            <div class="hidden md:block">
+              <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-sm p-8 rounded-lg shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div class="text-sm font-medium">Smart Irrigation Dashboard</div>
+                </div>
+                <div class="space-y-4">
+                  <div class="h-2 bg-white bg-opacity-20 rounded-full w-full"></div>
+                  <div class="h-2 bg-white bg-opacity-20 rounded-full w-5/6"></div>
+                  <div class="h-2 bg-white bg-opacity-20 rounded-full w-4/6"></div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-4">
+                  <div class="bg-white bg-opacity-20 p-4 rounded-lg">
+                    <div class="h-24 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="bg-white bg-opacity-20 p-4 rounded-lg">
+                    <div class="h-24 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="absolute bottom-0 left-0 right-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"></svg>
+        </div>
+      </section>
+      
+      <!-- Features Section -->
+      <section id="features" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div class="text-center mb-16">
+            <div class="inline-block bg-primary-100 px-8 py-3 rounded-full mb-6">
+              <span class="text-primary-700 font-bold text-xl uppercase tracking-wider">Why Choose Us</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mt-6 mb-6 section-title">Intelligent Features</h2>
+            <div class="w-32 h-1 bg-primary-500 mx-auto mb-8"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Our system combines real-time data with advanced algorithms to provide precise irrigation recommendations.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-screen-xl mx-auto">
+            <!-- Feature 1 -->
+            <div class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:border-primary-300 transition-all duration-300 hover:shadow-xl">
+              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mb-4 transform transition-transform duration-500 feature-icon shadow-lg mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Real-time Weather Data</h3>
+              <p class="text-base text-gray-600 mb-4 text-center">Incorporates local weather forecasts to adjust irrigation schedules accordingly.</p>
+              <ul class="space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Temperature forecasts</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Precipitation predictions</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Wind speed monitoring</span>
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:border-primary-300 transition-all duration-300 hover:shadow-xl">
+              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mb-4 transform transition-transform duration-500 feature-icon shadow-lg mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Crop-Specific Recommendations</h3>
+              <p class="text-base text-gray-600 mb-4 text-center">Tailored irrigation plans based on crop type, growth stage, and water requirements.</p>
+              <ul class="space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Customized water schedules</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Growth stage adaptation</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Seasonal adjustments</span>
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:border-primary-300 transition-all duration-300 hover:shadow-xl">
+              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center mb-4 transform transition-transform duration-500 feature-icon shadow-lg mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Soil Moisture Analysis</h3>
+              <p class="text-base text-gray-600 mb-4 text-center">Monitors soil conditions to prevent over or under watering of your crops.</p>
+              <ul class="space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Real-time moisture readings</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Soil type optimization</span>
+                </li>
+                <li class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Drainage assessment</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Benefits Section -->
+      <section id="benefits" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div class="text-center mb-12">
+            <div class="inline-block bg-primary-100 px-8 py-3 rounded-full mb-6">
+              <span class="text-primary-700 font-bold text-xl uppercase tracking-wider">What You'll Gain</span>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6 section-title">Key Benefits</h2>
+            <div class="w-32 h-1 bg-primary-500 mx-auto mb-8"></div>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-12">Our smart irrigation system helps you achieve more with less.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-screen-xl mx-auto">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class="p-6">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Water Conservation</h3>
+                <ul class="space-y-3">
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Reduce water usage by up to 30%</span>
+                  </li>
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Prevent water runoff and soil erosion</span>
+                  </li>
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Lower water bills and operational costs</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class="p-6">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Improved Crop Yield</h3>
+                <ul class="space-y-3">
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Increase crop production by up to 25%</span>
+                  </li>
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Healthier plants with optimal water delivery</span>
+                  </li>
+                  <li class="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span class="text-gray-600">Reduce disease and pest pressure</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- About Section -->
+      <section id="about" class="py-24 bg-white min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center max-w-screen-xl mx-auto">
+            <div>
+              <div class="inline-block bg-primary-100 px-8 py-3 rounded-full mb-8">
+                <span class="text-primary-700 font-bold text-xl uppercase tracking-wider">Our Story</span>
+              </div>
+              <h2 class="text-4xl md:text-6xl font-bold text-gray-900 mb-8">About Our System</h2>
+              <p class="text-xl text-gray-600 mb-6 leading-relaxed">The Smart Irrigation System is designed to revolutionize how farmers and gardeners manage water resources. By combining sensor data, weather forecasts, and crop-specific information, our system provides precise irrigation recommendations.</p>
+              <p class="text-xl text-gray-600 mb-10 leading-relaxed">Our mission is to promote sustainable agriculture through intelligent water management, helping you save resources while maximizing yield.</p>
+              <a href="index.html" class="btn-primary text-lg px-10 py-4">Get Started Now</a>
+            </div>
+            <div class="rounded-xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-105">
+              <img src="https://images.unsplash.com/photo-1586771107445-d3ca888129ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1472&q=80" alt="Smart Irrigation System" class="w-full h-auto">
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- CTA Section -->
+      <section id="action" class="py-16 bg-gradient-to-br from-primary-700 to-primary-800 text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <defs>
+              <pattern id="water-pattern" patternUnits="userSpaceOnUse" width="200" height="200" patternTransform="rotate(45)">
+                <path d="M-50,150 C-30,130 30,130 50,150 C70,170 130,170 150,150 C170,130 230,130 250,150 C270,170 330,170 350,150 C370,130 430,130 450,150 C470,170 530,170 550,150" stroke="white" stroke-width="8" fill="none" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#water-pattern)" />
+          </svg>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <span class="inline-block px-4 py-1 bg-white bg-opacity-20 rounded-full text-sm font-semibold mb-3">TAKE ACTION NOW</span>
+          <h2 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">Ready to Optimize Your Irrigation?</h2>
+          <p class="text-lg mb-8 max-w-3xl mx-auto text-gray-100">Start making data-driven irrigation decisions today and see the difference in your crops and water usage.</p>
+          
+          <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <a href="index.html" class="bg-white text-primary-700 hover:bg-primary-50 text-base px-8 py-3 rounded-full font-bold flex items-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group">
+              <span>ACCESS INPUT PAGE</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+            <a href="#about" class="border-2 border-white text-white hover:bg-white hover:text-primary-700 text-base px-8 py-3 rounded-full font-bold flex items-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <span>LEARN MORE</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </a>
+          </div>
+          
+          <div class="mt-8 flex justify-center">
+            <div class="flex items-center space-x-2 text-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>Secure & Reliable</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Footer -->
+      <footer id="footer" class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <h3 class="text-base font-semibold mb-3">Smart Irrigation System</h3>
+              <p class="text-gray-400 text-sm">Advanced irrigation management for modern agriculture.</p>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-3">Quick Links</h3>
+              <ul class="space-y-1.5 text-sm">
+                <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                <li><a href="#benefits" class="text-gray-400 hover:text-white transition-colors">Benefits</a></li>
+                <li><a href="#about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                <li><a href="index.html" class="text-gray-400 hover:text-white transition-colors">Input Page</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-3">Resources</h3>
+              <ul class="space-y-1.5 text-sm">
+                <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Support</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-base font-semibold mb-3">Contact</h3>
+              <p class="text-gray-400 text-sm">Have questions? Reach out to our support team.</p>
+              <a href="mailto:support@smartirrigation.com" class="text-primary-400 hover:text-primary-300 transition-colors text-sm">support@smartirrigation.com</a>
+            </div>
+          </div>
+          <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+            <p>&copy; 2025 Smart Irrigation System. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <!-- Landing page navigation script -->
+    <script src="landing.js"></script>
+  </body>
+</html>

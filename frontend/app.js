@@ -211,21 +211,42 @@ document.addEventListener('DOMContentLoaded', function() {
               label: 'Water Amount (L/h)',
               data: waterAmountData,
               borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              backgroundColor: 'rgba(53, 162, 235, 0.2)',
+              borderWidth: 3,
+              pointBackgroundColor: 'rgb(53, 162, 235)',
+              pointBorderColor: '#fff',
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              tension: 0.3,
+              fill: true,
               yAxisID: 'y'
             },
             {
               label: 'Soil Moisture (%)',
               data: soilMoistureData,
               borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderWidth: 3,
+              pointBackgroundColor: 'rgb(75, 192, 192)',
+              pointBorderColor: '#fff',
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              tension: 0.3,
+              fill: true,
               yAxisID: 'y1'
             },
             {
               label: 'Rain Probability (%)',
               data: rainProbabilityData,
               borderColor: 'rgb(255, 99, 132)',
-              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderWidth: 3,
+              pointBackgroundColor: 'rgb(255, 99, 132)',
+              pointBorderColor: '#fff',
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              tension: 0.3,
+              fill: true,
               yAxisID: 'y1'
             }
           ]
@@ -236,16 +257,58 @@ document.addEventListener('DOMContentLoaded', function() {
             mode: 'index',
             intersect: false
           },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 13
+              },
+              padding: 15,
+              cornerRadius: 8,
+              usePointStyle: true
+            }
+          },
           scales: {
+            x: {
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
+              },
+              ticks: {
+                font: {
+                  weight: 'bold'
+                }
+              }
+            },
             y: {
               type: 'linear',
               display: true,
               position: 'left',
               title: {
                 display: true,
-                text: 'Water Amount (L/h)'
+                text: 'Water Amount (L/h)',
+                font: {
+                  weight: 'bold'
+                }
               },
-              min: 0
+              min: 0,
+              grid: {
+                color: 'rgba(53, 162, 235, 0.1)'
+              }
             },
             y1: {
               type: 'linear',
@@ -253,12 +316,16 @@ document.addEventListener('DOMContentLoaded', function() {
               position: 'right',
               title: {
                 display: true,
-                text: 'Percentage (%)'
+                text: 'Percentage (%)',
+                font: {
+                  weight: 'bold'
+                }
               },
               min: 0,
               max: 100,
               grid: {
-                drawOnChartArea: false
+                drawOnChartArea: false,
+                color: 'rgba(75, 192, 192, 0.1)'
               }
             }
           }
@@ -279,11 +346,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Main app container
     rootElement.innerHTML = `
       <div class="min-h-screen bg-gray-50">
-        <header class="bg-white shadow-sm">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-primary-700">Smart Irrigation System</h1>
+        <header class="bg-gradient-to-r from-primary-700 to-primary-600 shadow-lg">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+              <a href="landing.html" class="flex items-center bg-white/15 hover:bg-white/25 text-white font-medium rounded-full py-2 px-4 mr-4 group shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Landing Page</span>
+              </a>
+              <h1 class="text-2xl font-bold text-white">Smart Irrigation System</h1>
+            </div>
             <div class="flex items-center space-x-4">
-              <span class="text-gray-600">Welcome, Guest</span>
+              <a href="history.html" class="text-white hover:text-primary-100 transition-colors flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span>View History</span>
+              </a>
+              <div class="bg-white/20 text-white px-3 py-1 rounded-full text-sm flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>Welcome, Guest</span>
+              </div>
             </div>
           </div>
         </header>
@@ -299,25 +385,15 @@ document.addEventListener('DOMContentLoaded', function() {
               </div>
             </div>
             
-            <div class="bg-white rounded-lg shadow-md p-6">
-              <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-semibold text-gray-800">Irrigation History</h2>
-                <button 
-                  onclick="window.appExportCSV()"
-                  class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm flex items-center"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Export CSV
-                </button>
-              </div>
-              
-              <div class="mb-8">
-                ${renderHistoryChartContainer()}
-              </div>
-              
-              ${renderHistoryTable()}
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+              <h2 class="text-xl font-semibold text-gray-800 mb-4">Irrigation History</h2>
+              <p class="text-gray-600 mb-6">View your complete irrigation history with detailed charts and data.</p>
+              <a href="history.html" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-md inline-flex items-center transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                View Complete History
+              </a>
             </div>
           </div>
         </main>

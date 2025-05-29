@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Irrigation History - Smart Irrigation System</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          fontFamily: {
+            'sans': ['Poppins', 'sans-serif'],
+          },
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                200: '#bbf7d0',
+                300: '#86efac',
+                400: '#4ade80',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+                800: '#166534',
+                900: '#14532d',
+                950: '#052e16',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Axios -->
+    <script crossorigin src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <style>
+      /* Base styles */
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #f9fafb;
+        color: #111827;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      }
+      
+      .chart-container {
+        height: 300px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="history-root">
+      <!-- App will be rendered here -->
+      <div class="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-primary-600 mb-4">Smart Irrigation System</h1>
+          <p class="text-gray-600 mb-8">Loading history data...</p>
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // History page script
+      document.addEventListener('DOMContentLoaded', function() {
+        // App state
+        const state = {
+          irrigationHistory: [],
+          loading: {
+            history: false
+          },
+          errors: {
+            history: null
+          }
+        };
+
+        // API endpoints
+        const API = {
+          history: '/api/irrigation/history/',
+          exportCsv: '/api/irrigation/export-csv/'
+        };
+
+        // Initialize the application
+        function init() {
+          renderHistoryPage();
+          fetchIrrigationHistory();
+        }
+
+        // Fetch irrigation history
+        function fetchIrrigationHistory() {
+          state.loading.history = true;
+          renderHistoryPage();
+
+          axios.get(API.history)
+            .then(response => {
+              state.irrigationHistory = response.data.history;
+              state.loading.history = false;
+              state.errors.history = null;
+            })
+            .catch(error => {
+              console.error('Error fetching irrigation history:', error);
+              state.loading.history = false;
+              state.errors.history = 'Failed to load irrigation history';
+            })
+            .finally(() => {
+              renderHistoryPage();
+              if (state.irrigationHistory.length > 0) {
+                renderHistoryChart();
+              }
+            });
+        }
+
+        // Export CSV
+        function exportCSV() {
+          window.location.href = API.exportCsv;
+        }
+
+        // Render history chart
+        function renderHistoryChart() {
+          setTimeout(() => {
+            const chartCanvas = document.getElementById('historyChart');
+            if (!chartCanvas) return;
+            
+            // Sort history by date
+            const sortedHistory = [...state.irrigationHistory].sort((a, b) => 
+              new Date(a.timestamp) - new Date(b.timestamp)
+            );
+            
+            // Prepare data
+            const labels = sortedHistory.map(item => formatDate(item.timestamp));
+            const waterAmountData = sortedHistory.map(item => item.decision.water_amount);
+            const soilMoistureData = sortedHistory.map(item => item.sensor_data.soil_moisture);
+            const rainProbabilityData = sortedHistory.map(item => item.weather_data.rain_probability);
+            
+            // Create chart
+            new Chart(chartCanvas, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: 'Water Amount (L/h)',
+                    data: waterAmountData,
+                    borderColor: 'rgb(53, 162, 235)',
+                    backgroundColor: 'rgba(53, 162, 235, 0.2)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgb(53, 162, 235)',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3,
+                    fill: true,
+                    yAxisID: 'y'
+                  },
+                  {
+                    label: 'Soil Moisture (%)',
+                    data: soilMoistureData,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgb(75, 192, 192)',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3,
+                    fill: true,
+                    yAxisID: 'y1'
+                  },
+                  {
+                    label: 'Rain Probability (%)',
+                    data: rainProbabilityData,
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgb(255, 99, 132)',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3,
+                    fill: true,
+                    yAxisID: 'y1'
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                interaction: {
+                  mode: 'index',
+                  intersect: false
+                },
+                plugins: {
+                  legend: {
+                    position: 'top',
+                    labels: {
+                      usePointStyle: true,
+                      padding: 20,
+                      font: {
+                        size: 12,
+                        weight: 'bold'
+                      }
+                    }
+                  },
+                  tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                      size: 14,
+                      weight: 'bold'
+                    },
+                    bodyFont: {
+                      size: 13
+                    },
+                    padding: 15,
+                    cornerRadius: 8,
+                    usePointStyle: true
+                  }
+                },
+                scales: {
+                  x: {
+                    grid: {
+                      color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                      font: {
+                        weight: 'bold'
+                      }
+                    }
+                  },
+                  y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                      display: true,
+                      text: 'Water Amount (L/h)',
+                      font: {
+                        weight: 'bold'
+                      }
+                    },
+                    min: 0,
+                    grid: {
+                      color: 'rgba(53, 162, 235, 0.1)'
+                    }
+                  },
+                  y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                      display: true,
+                      text: 'Percentage (%)',
+                      font: {
+                        weight: 'bold'
+                      }
+                    },
+                    min: 0,
+                    max: 100,
+                    grid: {
+                      drawOnChartArea: false,
+                      color: 'rgba(75, 192, 192, 0.1)'
+                    }
+                  }
+                }
+              }
+            });
+          }, 100);
+        }
+
+        // Format date
+        function formatDate(dateString) {
+          return new Date(dateString).toLocaleString();
+        }
+
+        // Render the history page
+        function renderHistoryPage() {
+          const rootElement = document.getElementById('history-root');
+          
+          rootElement.innerHTML = `
+            <div class="min-h-screen bg-gray-50">
+              <header class="bg-gradient-to-r from-primary-700 to-primary-600 shadow-lg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+                  <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex items-center bg-white/15 hover:bg-white/25 text-white font-medium rounded-full py-2 px-4 mr-4 group shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 group-hover:transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                      </svg>
+                      <span>Back to Input Page</span>
+                    </a>
+                    <h1 class="text-2xl font-bold text-white flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                      Irrigation History
+                    </h1>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <a href="landing.html" class="text-white hover:text-primary-100 transition-colors flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      <span>Landing Page</span>
+                    </a>
+                    <div class="bg-white/20 text-white px-3 py-1 rounded-full text-sm flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span>Welcome, Guest</span>
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                  <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                      Irrigation History Dashboard
+                    </h2>
+                    <button 
+                      onclick="window.historyExportCSV()"
+                      class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-5 py-2 rounded-md text-sm flex items-center shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Export CSV
+                    </button>
+                  </div>
+                  
+                  <div class="mb-8">
+                    ${renderHistoryChartContainer()}
+                  </div>
+                  
+                  ${renderHistoryTable()}
+                </div>
+              </main>
+
+              <footer class="bg-white border-t border-gray-200 py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <p class="text-center text-gray-500 text-sm">
+                    &copy; ${new Date().getFullYear()} Smart Irrigation System. All rights reserved.
+                  </p>
+                </div>
+              </footer>
+            </div>
+          `;
+        }
+
+        // Render history chart container
+        function renderHistoryChartContainer() {
+          if (state.loading.history) {
+            return `
+              <div class="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div>
+              </div>
+            `;
+          }
+          
+          if (state.errors.history) {
+            return `
+              <div class="bg-red-50 text-red-700 p-4 rounded-lg">
+                ${state.errors.history}
+              </div>
+            `;
+          }
+          
+          if (state.irrigationHistory.length === 0) {
+            return `
+              <div class="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
+                <p class="text-gray-500">No irrigation history available yet</p>
+              </div>
+            `;
+          }
+          
+          return `
+            <div class="chart-container bg-white p-4 rounded-lg border border-gray-200">
+              <canvas id="historyChart"></canvas>
+            </div>
+          `;
+        }
+
+        // Render history table
+        function renderHistoryTable() {
+          if (state.loading.history) {
+            return `
+              <div class="flex items-center justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div>
+              </div>
+            `;
+          }
+          
+          if (state.errors.history) {
+            return `
+              <div class="bg-red-50 text-red-700 p-4 rounded-lg">
+                ${state.errors.history}
+              </div>
+            `;
+          }
+          
+          if (state.irrigationHistory.length === 0) {
+            return `
+              <div class="text-center py-8 text-gray-500">
+                <p>No irrigation history available yet.</p>
+              </div>
+            `;
+          }
+
+          // Get status color
+          const getStatusColor = (status) => {
+            switch (status) {
+              case 'Active':
+                return 'bg-green-100 text-green-800';
+              case 'Pending':
+                return 'bg-yellow-100 text-yellow-800';
+              case 'Cancelled':
+                return 'bg-red-100 text-red-800';
+              default:
+                return 'bg-gray-100 text-gray-800';
+            }
+          };
+
+          return `
+            <div class="rounded-lg border border-gray-200 shadow-md overflow-hidden">
+              <div class="overflow-hidden"> <!-- Removed overflow-x-auto to prevent horizontal scrolling -->
+                <table class="w-full table-fixed divide-y divide-gray-200">
+                  <thead class="bg-gradient-to-r from-primary-700 to-primary-600 text-white">
+                    <tr>
+                      <th scope="col" class="w-[15%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          Date & Time
+                        </div>
+                      </th>
+                      <th scope="col" class="w-[15%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                          </svg>
+                          Crop & Soil
+                        </div>
+                      </th>
+                      <th scope="col" class="w-[15%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                          </svg>
+                          Soil Moisture
+                        </div>
+                      </th>
+                      <th scope="col" class="w-[20%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                          </svg>
+                          Weather
+                        </div>
+                      </th>
+                      <th scope="col" class="w-[20%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                          </svg>
+                          Irrigation
+                        </div>
+                      </th>
+                      <th scope="col" class="w-[15%] px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">
+                        <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Status
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    ${state.irrigationHistory.map((item, index) => `
+                      <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-primary-50 transition-colors duration-150">
+                        <td class="px-4 py-3 text-sm text-gray-700 truncate">
+                          ${formatDate(item.timestamp)}
+                        </td>
+                        <td class="px-4 py-3">
+                          <div class="text-sm font-medium text-gray-900 truncate">
+                            ${item.crop_type.charAt(0).toUpperCase() + item.crop_type.slice(1)}
+                          </div>
+                          <div class="text-xs text-gray-500 truncate">${item.soil_type}</div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700 truncate">
+                          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                            ${item.sensor_data.soil_moisture}%
+                          </span>
+                        </td>
+                        <td class="px-4 py-3">
+                          <div class="text-sm text-gray-900 truncate">${item.weather_data.temperature}°C</div>
+                          <div class="text-xs text-gray-500 truncate">
+                            Rain: ${item.weather_data.rain_probability}%
+                          </div>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-700 truncate">
+                          <span class="font-medium text-primary-700">${item.decision.water_amount} L/h</span> for ${item.decision.duration}h
+                        </td>
+                        <td class="px-4 py-3 truncate">
+                          <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.decision.status)}">
+                            ${item.decision.status}
+                          </span>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }
+
+        // Expose functions to window
+        window.historyExportCSV = exportCSV;
+
+        // Initialize the app
+        init();
+      });
+    </script>
+  </body>
+</html>
