@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Smart Irrigation System</title>
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: '#f0fdf4',
+                100: '#dcfce7',
+                200: '#bbf7d0',
+                300: '#86efac',
+                400: '#4ade80',
+                500: '#22c55e',
+                600: '#16a34a',
+                700: '#15803d',
+                800: '#166534',
+                900: '#14532d',
+                950: '#052e16',
+              },
+            },
+          },
+        },
+      }
+    </script>
+    
+    <style>
+      /* Base styles */
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #f9fafb;
+        color: #111827;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      }
+      
+      .login-bg {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+        background-size: cover;
+        background-position: center;
+      }
+      
+      .form-input:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen flex flex-col">
+      <!-- Header -->
+      <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-3 flex justify-between items-center">
+          <div class="flex items-center">
+            <a href="landing.html" class="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+              <h1 class="text-xl font-bold text-primary-600 ml-2">Smart Irrigation System</h1>
+            </a>
+          </div>
+          <nav class="hidden md:flex items-center space-x-8">
+            <a href="landing.html" class="bg-white/15 hover:bg-primary-50 text-primary-600 font-medium rounded-full py-2 px-4 group shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <span>Back to Home</span>
+            </a>
+          </nav>
+        </div>
+      </header>
+      
+      <!-- Login Section -->
+      <section class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 login-bg">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl relative z-10 border border-gray-100">
+          <div>
+            <div class="flex justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-primary-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+              Access the Smart Irrigation System
+            </p>
+          </div>
+          <div id="error-message" class="bg-red-50 text-red-700 p-3 rounded-md hidden"></div>
+          <form class="mt-8 space-y-6" id="login-form">
+            <div class="rounded-md shadow-sm -space-y-px">
+              <div>
+                <label for="username" class="sr-only">Username</label>
+                <input id="username" name="username" type="text" required class="form-input appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Username">
+              </div>
+              <div>
+                <label for="password" class="sr-only">Password</label>
+                <input id="password" name="password" type="password" required class="form-input appearance-none rounded-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Password">
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                  Remember me
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-300">
+                <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg class="h-5 w-5 text-primary-500 group-hover:text-primary-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                  </svg>
+                </span>
+                Sign in
+              </button>
+            </div>
+          </form>
+          <div class="text-center mt-4">
+            <p class="text-xs text-gray-500">Default credentials: admin / password</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Footer -->
+      <footer class="bg-white border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <p class="text-center text-gray-500 text-sm">
+            &copy; 2025 Smart Irrigation System. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        
+        // Default credentials
+        const validCredentials = {
+          username: 'admin',
+          password: 'password'
+        };
+        
+        loginForm.addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          const username = document.getElementById('username').value;
+          const password = document.getElementById('password').value;
+          
+          // Check credentials
+          if (username === validCredentials.username && password === validCredentials.password) {
+            // Store login state in session storage
+            sessionStorage.setItem('isLoggedIn', 'true');
+            
+            // Redirect to input page
+            window.location.href = 'index.html';
+          } else {
+            // Show error message
+            errorMessage.textContent = 'Invalid username or password. Please try again.';
+            errorMessage.classList.remove('hidden');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
